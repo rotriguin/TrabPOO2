@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    /* Responsividade para telas pequenas */
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 15px;
+        background: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+
+      td {
+        text-align: left;
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        top: 8px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Painel de Usuários</h1>
+
+  <h2>Instituições</h2>
+  <table id="tabelaInstituicoes">
+    <thead>
+      <tr>
+        <th>ID (CNPJ)</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Endereço</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dados serão inseridos aqui via JavaScript -->
+    </tbody>
+  </table>
+
+  <h2>Pessoas Físicas</h2>
+  <table id="tabelaUsuarios">
+    <thead>
+      <tr>
+        <th>ID (CPF)</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Endereço</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Dados serão inseridos aqui via JavaScript -->
+    </tbody>
+  </table>
+
+  <script>
+    async function carregarDados() {
+      try {
+        const resposta = await fetch('/dados');
+        const dados = await resposta.json();
+
+        const instituicoes = dados.instituicoes;
+        const usuarios = dados.usuarios;
+
+        const tabelaInstituicoes = document.getElementById('tabelaInstituicoes').querySelector('tbody');
+        const tabelaUsuarios = document.getElementById('tabelaUsuarios').querySelector('tbody');
+
+        instituicoes.forEach(inst => {
+          const linha = `
+            <tr>
+              <td data-label="ID (CNPJ)">${inst.id}</td>
+              <td data-label="Nome">${inst.nome}</td>
+              <td data-label="Email">${inst.email}</td>
+              <td data-label="Telefone">${inst.telefone}</td>
+              <td data-label="Endereço">${inst.endereco}</td>
+            </tr>
+          `;
+          tabelaInstituicoes.innerHTML += linha;
+        });
+
+        usuarios.forEach(user => {
+          const linha = `
+            <tr>
+              <td data-label="ID (CPF)">${user.id}</td>
+              <td data-label="Nome">${user.nome}</td>
+              <td data-label="Email">${user.email}</td>
+              <td data-label="Telefone">${user.telefone}</td>
+              <td data-label="Endereço">${user.endereco}</td>
+            </tr>
+          `;
+          tabelaUsuarios.innerHTML += linha;
+        });
+
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    }
+
+    window.onload = carregarDados;
+  </script>
+
+</body>
+</html>
